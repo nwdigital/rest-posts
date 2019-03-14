@@ -6,8 +6,9 @@ Contributors: mathewemoore
 Tags: REST, post, posts, embed, embeds, rest embed, rest embeds, rest post embed, rest post embeds, rest posts embed, rest posts embeds, rest posts, multisite posts, network posts, rest api, post shortcode, posts shortcode, rest posts shortcode, rest post shortcode
 Donate link: https://www.restposts.com/donate
 Requires at least: 4.6
-Tested up to: 4.7.2
-Stable tag: 1.0
+Tested up to: 4.8.2
+Requires PHP: 5.6
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Embed posts from your site or others into posts and pages using WP REST API. Great for multisite networks. Sidebar widget included.
@@ -36,14 +37,59 @@ This section describes how to install the plugin and get it working.
 2. Activate the plugin through the \'Plugins\' menu in WordPress
 3. Visit the \'RESTposts\' menu item in your admin sidebar
 
-### Screenshots ==
+### Frequently Asked Questions
 
-1. Frontpage Shortcode 3 Columns
-2. Shortcode Generator
-3. Sidebar Widget
+[Our documentation can be found here.](http://www.restposts.com/faq/)
+
+### Screenshots
+
+1. 2 Column Layout with Shortcode
+2. 3 Column Layout with Shortcode
+3. 4 Column Layout with Shortcode
+4. Dashboard: Shortcode Generator with live shortcodes creator and updater below.
+5. REST API Response Test: Test urls to see if they have posts available via REST.
 
 ### Changelog
 
-= 1.0 =
+#### 1.1.0
+
+* Simplified Shortcode Generator by adding some defaults
+* Added new shortcode [rest_post] to enable the caching mechanism and make publishing and updating shortcodes easier.
+* Added transients for 12 Hour caching of JSON repsonse for the new shortcode [rest_post]
+* Added post_type option to the shortcode generator
+* Added post_type option to sidebar widget
+* Updating shortcodes now clears transients cache
+* Saved some space in the shortcode generator by modifying some styles and removing some options
+* Advanced options are now available in already published shortcodes edit section
+* Removed Copy button and associated functions to improve performance
+* Removed REST API Test from settings
+* Removed "Title Font Size" option (modify using css if needed)
+* Fully Revamped the shortcode generator
+* Incorporated Javascript based Toggle boxes for editing/updating shortcodes
+* CSS Styling Tweaks (Frontend and Backend)
+* Added the following options to the edit boxes
+** Show/Hide Post Excerpts
+** Show/Hide Post Titles
+** Show/Hide Post Dates
+** Show/Hide Post Featured Images
+* Compatible with WordPress 4.8.2
+
+#### 1.0.8
+
+* Added Requires PHP version 5.6
+* Fixed fontawesome issues in backend
+* Added "post_type" option to shortcode
+* Compatible with WordPress 4.8.1
+
+#### 1.0.2
+
+* Added Changelog
+
+#### 1.0.1
+
+* Fixed missing "Enable Shortcodes in Widgets" option
+* Added tooltips to Shortcode Creator
+
+#### 1.0
 
 * Initial Release
