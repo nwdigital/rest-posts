@@ -42,24 +42,17 @@ function plugin_options_page()	{
     	<h1>RESTposts Settings</h1>
 		<h2 class="nav-tab-wrapper">
 		<a href="?page=restpost-settings&tab=shortcodes" class="nav-tab <?php echo $restpost_active_tab == 'shortcodes' ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
-		<a href="?page=restpost-settings&tab=rest-test" class="nav-tab <?php echo $restpost_active_tab == 'rest-test' ? 'nav-tab-active' : ''; ?>">REST API Test</a>
 		<a href="?page=restpost-settings&tab=support" class="nav-tab <?php echo $restpost_active_tab == 'support' ? 'nav-tab-active' : ''; ?>">Info & Help</a></h2>
-		<form method="post" action="options.php" enctype="multipart/form-data">
+		<form id="rpsts_form" method="post" action="options.php" enctype="multipart/form-data">
 			<?php if( $restpost_active_tab == 'shortcodes' )
 				{
 				settings_fields("section-2");
-				do_settings_sections("theme-options-2");
+				do_settings_sections("plugin-options-2");
 				}
 				else if( $restpost_active_tab == 'support' )
 				{
 				settings_fields("section-3");
-				do_settings_sections("theme-options-3");
-				}
-				else if( $restpost_active_tab == 'rest-test' )
-				{
-				settings_fields("section");
-				do_settings_sections("theme-options");
-				submit_button();
+				do_settings_sections("plugin-options-3");
 				}?>
 		</form>
 		</div>
@@ -79,58 +72,83 @@ return;
 		$link = "<a class='button rp-delete' href='" . wp_nonce_url( get_bloginfo('url') . "/wp-admin/post.php?action=delete&amp;post=" . $post->ID, 'delete-post_' . $post->ID) . "'>".$link."</a>";
 		echo $before . $link . $after;
 	}
-	
+
 class RestPost_Create_Update_Feature {
 	private $title_update_box;
 
 // Copy Shortcode Function
-function rp_copy_shortcode($link = 'Copy', $before = '', $after = '') {
-	$alert_title = get_the_title();
-	$my_alert = "'$alert_title - The shortcode was successfully copied.'";
-	$rp_button_id = "1";
-	$rp_button_id .= get_the_ID();
-	$rp_button_onclick = ' onclick="postshortcode_copyToClipboard('.$rp_button_id.'); alert('.$my_alert.');"';
-	$link = "<input type='submit' name='copy' id='copy' value='Copy' class='button'".$rp_button_onclick.">";
-	echo $before . $link . $after;
+function RestPosts_Shortcode_Generator() {
+
 	}
 
 // Query RESTPOSTS custom post type
 public function restposts_shortcode_query() {
 	// the query
-	$restposts_args = array( 'post_type' => 'mrp_restposts' );
+	$restposts_args = array( 'post_type' => 'mrp_restposts', 'posts_per_page'	=> '-1' );
 	$the_query = new WP_Query( $restposts_args );
 	if ( $the_query->have_posts() ) : ?>
 	<!-- pagination here -->
 	<!-- the loop -->
 		<div id="rp-query" style="margin-top:25px;">
-		<h2>My Shortcodes</h2>
+
 		<table class="restposts-shortcode-table">
-		<tr><th>Shortcode Title</th><th>Description</th><th colspan="7">Shortcode</th></tr>
+			<tr>
+				<th colspan="10">
+					<div class="rp_shortcode_heading">
+						<div><span>TITLE</span></div>
+						<div><span>SHORTCODE</span></div>
+						<div><span>DATE PUBLISHED</span></div>
+						<div><span>EDIT</span></div>
+					</div>
+				</th>
+			</tr>
 		<?php while ( $the_query->have_posts() ) : $the_query->the_post();
 			// Set post meta variables
+			$this->rp_post_type = get_post_meta( get_the_ID(),'restpost_post_type', true);
 			$this->rp_wurl = get_post_meta( get_the_ID(),'restpost_website_url', true);
 			$this->rp_nmpt = get_post_meta( get_the_ID(),'restpost_numb_posts', true);
 			$this->rp_nmcl = get_post_meta( get_the_ID(),'restpost_numb_columns', true);
 			$this->rp_exlt = get_post_meta( get_the_ID(),'restpost_excpt_limit', true);
-			$this->rp_tlft = get_post_meta( get_the_ID(),'restpost_ttl_font_sz', true);
+			$this->rp_show_excpt = get_post_meta( get_the_ID(),'restpost_show_excpt', true);
+			$this->rp_show_title = get_post_meta( get_the_ID(),'restpost_show_title', true);
+			$this->rp_show_date = get_post_meta( get_the_ID(),'restpost_show_date', true);
+			$this->rp_show_img = get_post_meta( get_the_ID(),'restpost_show_img', true);
 			$this->rp_offset = get_post_meta( get_the_ID(), 'restpost_offset', true);
 			// Create shortcode variables
+			// $rp_post_id = ' id="'.get_the_ID().'"';
+			$rp_post_id = get_the_ID();
 			$rp_wurl_enc = ' url="'.$this->rp_wurl.'"';
+			$rp_post_type_enc = ' post_type="'.$this->rp_post_type.'"';
+
 			$rp_nmpt_enc = ' count="'.$this->rp_nmpt.'"';
 			$rp_nmcl_enc = ' columns="'.$this->rp_nmcl.'"';
 			$rp_exlt_enc = (!empty($this->rp_exlt) ? ' excerpt_length="'.$this->rp_exlt.'"' : '' );
-			$rp_tlft_enc = (!empty($this->rp_tlft) ? ' title_size="'.$this->rp_tlft.'"' : '' );
+			$rp_show_excpt_enc = (!empty($this->rp_show_excpt) ? ' excerpt="true"' : '' );
+			$rp_show_title_enc = (!empty($this->rp_show_title) ? ' title="true"' : '' );
+			$rp_show_date_enc = (!empty($this->rp_show_date) ? ' date="true"' : '' );
+			$rp_show_img_enc = (!empty($this->rp_show_img) ? ' img="true"' : '' );
 			$rp_offset_enc = (!empty($this->rp_offset) ? ' offset="'.$this->rp_offset.'"' : '' );
 			// Generate the shortcode
-			$rp_new_shortcode = '<code id="1'.get_the_ID().'">[restpost'.$rp_wurl_enc.$rp_nmpt_enc.$rp_nmcl_enc.$rp_exlt_enc.$rp_tlft_enc.$rp_offset_enc.']</code>'; ?>		
-			<tr id="<?php echo get_the_ID();?>"><?php echo $this->restpost_update_post(); ?></tr>
+			?>
+
 			<tr class="rp-rowstart">
-			<td colspan="7"><?php echo $rp_new_shortcode; ?></td>
-			<td><?php self::rp_copy_shortcode('Copy'); ?></td>
-			<td><?php wp_delete_post_link('Delete'); ?><br/></td>
+				<td colspan="10">
+					<div class="rp_shortcode_details">
+						<div><span><?php echo get_the_title() . (!empty(get_the_content()) ? ' - ' : '' ) . get_the_content(); ?></span></div>
+						<div class="shortcode_section">
+							<span class="mrp_copy_shortcode" id="1<?php echo $rp_post_id; ?>">[rest_post id=<?php echo $rp_post_id; ?>]</span>
+							<div>Copied</div>
+						</div>
+						<div><span><?php echo get_the_date(); ?></span></div>
+						<div><span><button class="button button-primary restpost_edit" data-index="rptoggle_<?php echo $rp_post_id; ?>" href="#">edit</button></span></div>
+					</div>
+					<div class="toggle_box_restposts" id="rptoggle_<?php echo get_the_ID();?>"><?php echo $this->restpost_update_post(); ?></div>
+				</td>
 			</tr>
+
 		<?php endwhile; ?>
 		</table></div>
+
 		<!-- end of the loop -->
 		<!-- pagination here -->
 		<?php wp_reset_postdata();
@@ -141,126 +159,218 @@ public function restposts_shortcode_query() {
 
 // START CUSTOM POST UPDATE FUNCTION
 public function restpost_update_post() {
-	
+
 		$submit_id = 'submit-'.get_the_ID();
 		$update_id = 'title-'.get_the_ID();
 		if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST[$submit_id] )) { //check that our form was submitted
 		$update_id = 'title-'.get_the_ID();
 		$update_title = $_POST[$update_id]; //set our title
-		
+
 		// Check if items are empty or not
+		$restpost_post_type = (empty($_POST['restpost_post_type']) ? site_url() : $_POST['restpost_post_type'] );
 		$rp_up_website_url = (empty($_POST['restpost_website_url']) ? site_url() : $_POST['restpost_website_url'] );
 		$rp_up_description = (empty($_POST['restpost_description']) ? '' : $_POST['restpost_description'] );
 		$restpost_numb_posts = (empty($_POST['restpost_numb_posts']) ? '6' : $_POST['restpost_numb_posts'] );
 		$restpost_numb_columns = (empty($_POST['restpost_numb_columns']) ? '1' : $_POST['restpost_numb_columns'] );
 		$restpost_excpt_limit = (empty($_POST['restpost_excpt_limit']) ? '' : $_POST['restpost_excpt_limit'] );
+		$restpost_show_excpt = (empty($_POST['restpost_show_excpt']) ? '' : $_POST['restpost_show_excpt'] );
+		$restpost_show_title = (empty($_POST['restpost_show_title']) ? '' : $_POST['restpost_show_title'] );
+		$restpost_show_date = (empty($_POST['restpost_show_date']) ? '' : $_POST['restpost_show_date'] );
+		$restpost_show_img = (empty($_POST['restpost_show_img']) ? '' : $_POST['restpost_show_img'] );
 		$restpost_ttl_font_sz = (empty($_POST['restpost_ttl_font_sz']) ? '' : $_POST['restpost_ttl_font_sz'] );
 		$restpost_offset = (empty($_POST['restpost_offset']) ? '' : $_POST['restpost_offset'] );
-			
+
 		$update_rest_post = array( //our wp_insert_post args
 			'ID'			=> get_the_ID(),
 			'post_title'	=> wp_strip_all_tags($update_title),
 			'post_content'	=> $rp_up_description,
 			'post_type' 	=> 'mrp_restposts'
-			);			
+			);
 		// Insert the post and custom meta into the database and return the new post ID
 		$update_rest_post_id = wp_update_post( $update_rest_post ); //send our post, save the resulting ID
 		//add custom meta data, after the post is inserted
+		update_post_meta($update_rest_post_id, 'restpost_post_type', $restpost_post_type);
 		update_post_meta($update_rest_post_id, 'restpost_website_url', $rp_up_website_url);
 		update_post_meta($update_rest_post_id, 'restpost_numb_posts', $restpost_numb_posts);
 		update_post_meta($update_rest_post_id, 'restpost_numb_columns', $restpost_numb_columns);
 		update_post_meta($update_rest_post_id, 'restpost_excpt_limit', $restpost_excpt_limit);
+		update_post_meta($update_rest_post_id, 'restpost_show_excpt', $restpost_show_excpt);
+		update_post_meta($update_rest_post_id, 'restpost_show_title', $restpost_show_title);
+		update_post_meta($update_rest_post_id, 'restpost_show_date', $restpost_show_date);
+		update_post_meta($update_rest_post_id, 'restpost_show_img', $restpost_show_img);
 		update_post_meta($update_rest_post_id, 'restpost_ttl_font_sz', $restpost_ttl_font_sz);
 		update_post_meta($update_rest_post_id, 'restpost_offset', $restpost_offset);
 		echo wp_redirect(admin_url('admin.php?page=restpost-settings&tab=shortcodes'));
 	} else { ?>
 	<div id="update_postbox">
 	<form class="update-form" id="update_restpost_post" name="update_restpost_post" method="post">
-	<td>Title:<br/><input type="text" id="title-<?php echo get_the_ID(); ?>" value="<?php the_title(); ?>" name="title-<?php echo get_the_ID(); ?>" required /></td>
-	<td>Description:<br/><input id="restpost_description" name="restpost_description" value="<?php echo get_the_content();?>"/></td>
-	<td>Website:<br/><input type="url" id="restpost_website_url" name="restpost_website_url" value="<?php echo $this->rp_wurl; ?>" required /></td>
-	<td>Posts:<br/><input type="number" id="restpost_numb_posts" name="restpost_numb_posts" class="tiny-text" value="<?php echo $this->rp_nmpt; ?>" required /></td>
-	<td>Columns:<br/><input type="number" id="restpost_numb_columns" name="restpost_numb_columns" class="tiny-text" value="<?php echo $this->rp_nmcl;?>" required /></td>
-	<td>Excerpt Limit:<br/><input type="number" id="restpost_excpt_limit" name="restpost_excpt_limit" class="tiny-text" value="<?php echo $this->rp_exlt;?>"/></td>
-	<td>Title Size:<br/><input type="number" id="restpost_ttl_font_sz" name="restpost_ttl_font_sz" class="tiny-text" value="<?php echo $this->rp_tlft;?>"/></td>
-	<td>Offset:<br/><input type="number" id="restpost_offset" name="restpost_offset" class="tiny-text" value="<?php echo $this->rp_offset;?>"/></td>
-	<td><input type="submit" value="Update" id="update_restpost_shortcode" name="update_restpost_shortcode" class="update-button button" /><input type="hidden" name="submit-<?php echo get_the_ID(); ?>" value="post" /></td>
+		<div class="mrp_edit_table">
+			<div class="mrp_edit_col_1">
+				<div class="mrp_edit_item">Title&nbsp;&nbsp;
+					<input type="text" id="title-<?php echo get_the_ID(); ?>" value="<?php the_title(); ?>" name="title-<?php echo get_the_ID(); ?>" required /></div>
+				<div class="mrp_edit_item">Description&nbsp;&nbsp;
+					<input type="text" id="restpost_description" name="restpost_description" value="<?php echo get_the_content();?>"/></div>
+				<div class="mrp_edit_item">Website&nbsp;&nbsp;
+					<input type="url" id="restpost_website_url" name="restpost_website_url" value="<?php echo $this->rp_wurl; ?>" required /></div>
+				<div class="mrp_edit_item">Post Type&nbsp;&nbsp;
+					<input type="text" id="restpost_post_type" name="restpost_post_type" value="<?php echo $this->rp_post_type;?>"/></div>
+			</div>
+			<div class="mrp_edit_col_2">
+				<div class="mrp_edit_item">Number of Posts to Display&nbsp;&nbsp;
+					<input type="number" id="restpost_numb_posts" name="restpost_numb_posts" class="tiny-text" min="1" max="20" value="<?php echo $this->rp_nmpt; ?>" required />
+				</div>
+				<div class="mrp_edit_item">Number of Columns&nbsp;&nbsp;
+					<input type="number" id="restpost_numb_columns" name="restpost_numb_columns" class="tiny-text" min="1" max="4" value="<?php echo $this->rp_nmcl;?>" required />
+				</div>
+				<div class="mrp_edit_item">Skip Some Recent Posts&nbsp;&nbsp;
+					<input type="number" id="restpost_offset" name="restpost_offset" class="tiny-text" min="0" value="<?php echo $this->rp_offset;?>"/>
+				</div>
+				<div class="mrp_edit_item">Limit Excerpt Character Length&nbsp;&nbsp;
+					<input type="number" id="restpost_excpt_limit" name="restpost_excpt_limit" min="10" class="tiny-text" value="<?php echo $this->rp_exlt;?>"/>
+				</div>
+			</div>
+			<div class="mrp_edit_col_3">
+				<div class="mrp_edit_item">
+					<input type="checkbox" id="restpost_show_excpt" name="restpost_show_excpt" <?php checked( !empty($this->rp_show_excpt), true ); ?> value='true'>Show Post Excerpts
+				</div>
+				<div class="mrp_edit_item">
+					<input type="checkbox" id="restpost_show_title" name="restpost_show_title" <?php checked( !empty($this->rp_show_title), true ); ?> value='true'>Show Post Titles
+				</div>
+				<div class="mrp_edit_item">
+					<input type="checkbox" id="restpost_show_date" name="restpost_show_date" <?php checked( !empty($this->rp_show_date), true ); ?> value='true'>Show Post Dates
+				</div>
+				<div class="mrp_edit_item">
+					<input type="checkbox" id="restpost_show_img" name="restpost_show_img" <?php checked( !empty($this->rp_show_img), true ); ?> value='true'>Show Featured Images
+				</div>
+			</div>
+			<div class="mrp_edit_col_4">
+				<div class="mrp_edit_item">
+					<input type="submit" value="Update" id="update_restpost_shortcode" name="update_restpost_shortcode" class="update-button button" />
+				</div>
+				<div class="mrp_edit_item">
+					<input type="hidden" name="submit-<?php echo get_the_ID(); ?>" value="post" /><?php wp_delete_post_link('Delete'); ?>
+				</div>
+			</div>
+		</div>
+		<p><span style="text-align:right;color:red;">*</span> indicates required field
 	<?php wp_nonce_field( 'update_restpost_post' ); ?>
 	</form>
 	</div>
 <?php	}	} // END CUSTOM POST UPDATE FUNCTION & FORM
 
 	private $rp_wurl;
+	private $rp_post_type;
 	private $rp_nmpt;
 	private $rp_nmcl;
 	private $rp_exlt;
-	private $rp_tlft;
+	private $rp_show_excpt;
+	private $rp_show_title;
+	private $rp_show_date;
+	private $rp_show_img;
 	private $rp_offset;
 
 // START CUSTOM POST CREATION FUNCTION
 function restpost_create_new_post() {
 		global $wp;
-		
+
 		if( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['insert_post'] )) { //check that our form was submitted
 		$title = $_POST['shortcode_title']; //set our title
 		// Check if items are empty or not
-		$restpost_description = (empty($_POST['restpost_description']) ? '' : $_POST['restpost_description'] );
+		$restpost_new_post_type = (empty($_POST['restpost_post_type']) ? '' : $_POST['restpost_post_type'] );
 		$restpost_new_website_url = (empty($_POST['restpost_website_url']) ? site_url() : $_POST['restpost_website_url'] );
 		$restpost_numb_posts = (empty($_POST['restpost_numb_posts']) ? '6' : $_POST['restpost_numb_posts'] );
 		$restpost_numb_posts = (empty($_POST['restpost_numb_posts']) ? '6' : $_POST['restpost_numb_posts'] );
 		$restpost_numb_columns = (empty($_POST['restpost_numb_columns']) ? '1' : $_POST['restpost_numb_columns'] );
-		$restpost_excpt_limit = (empty($_POST['restpost_excpt_limit']) ? '' : $_POST['restpost_excpt_limit'] );
+		$restpost_excpt_limit = (empty($_POST['restpost_excpt_limit']) ? '32' : $_POST['restpost_excpt_limit'] );
+		$restpost_show_excpt = (empty($_POST['restpost_show_excpt']) ? 'true' : $_POST['restpost_show_excpt'] );
+		$restpost_show_title = (empty($_POST['restpost_show_title']) ? 'true' : $_POST['restpost_show_title'] );
+		$restpost_show_date = (empty($_POST['restpost_show_date']) ? 'true' : $_POST['restpost_show_date'] );
+		$restpost_show_img = (empty($_POST['restpost_show_img']) ? 'true' : $_POST['restpost_show_img'] );
 		$restpost_ttl_font_sz = (empty($_POST['restpost_ttl_font_sz']) ? '' : $_POST['restpost_ttl_font_sz'] );
 		$restpost_offset = (empty($_POST['restpost_offset']) ? '' : $_POST['restpost_offset'] );
-			
+
 		$rest_post = array( //our wp_insert_post args
 			'post_title'	=> wp_strip_all_tags($title),
-			'post_content'	=> $restpost_description,
+			'post_content'	=> '',
 			'post_status'	=> 'publish',
 			'post_type' 	=> 'mrp_restposts'
-			);			
+			);
 		// Insert the post and custom meta into the database and return the new post ID
-		$rest_post_id = wp_insert_post( $rest_post ); //send our post, save the resulting ID			
+		$rest_post_id = wp_insert_post( $rest_post ); //send our post, save the resulting ID
 		//add custom meta data, after the post is inserted
+		add_post_meta($rest_post_id, 'restpost_post_type', $restpost_new_post_type);
 		add_post_meta($rest_post_id, 'restpost_website_url', $restpost_new_website_url);
 		add_post_meta($rest_post_id, 'restpost_numb_posts', $restpost_numb_posts);
 		add_post_meta($rest_post_id, 'restpost_numb_columns', $restpost_numb_columns);
 		add_post_meta($rest_post_id, 'restpost_excpt_limit', $restpost_excpt_limit);
+		add_post_meta($rest_post_id, 'restpost_show_excpt', $restpost_show_excpt);
+		add_post_meta($rest_post_id, 'restpost_show_title', $restpost_show_title);
+		add_post_meta($rest_post_id, 'restpost_show_date', $restpost_show_date);
+		add_post_meta($rest_post_id, 'restpost_show_img', $restpost_show_img);
 		add_post_meta($rest_post_id, 'restpost_ttl_font_sz', $restpost_ttl_font_sz);
 		add_post_meta($rest_post_id, 'restpost_offset', $restpost_offset);
-		echo wp_redirect(admin_url('admin.php?page=restpost-settings&tab=shortcodes')); 
-	} else { ?>
+		echo wp_redirect(admin_url('admin.php?page=restpost-settings&tab=shortcodes'));
+	} else {
+		/*
+		 Start Shortcode Generator Table
+		 */
+		 ?>
 	<div id="postbox">
-	<h2>Shortcode Creator</h2>
 	<form id="new_restpost_post" name="new_restpost_post" method="post" action="">
 		<table class="restposts-shortcode-table">
-	<tr><th>Title</th><th>Description</th><th>Website</th><th>#Posts</th><th>#Columns</th><th>Excerpt Limit</th><th>Title Size</th><th colspan="2">Offset</th></tr>
-			<td><input type="text" id="shortcode_title" value="" name="shortcode_title" required /></td>
-			<td><input type="text" id="restpost_description" name="restpost_description" cols="80" rows="20"/></td>
-			<td><input type="url" id="restpost_website_url" value="" name="restpost_website_url" required /></td>
-			<td><input type="number" class="tiny-text" id="restpost_numb_posts" value="" name="restpost_numb_posts" required /></td>
-			<td><input type="number" class="tiny-text" id="restpost_numb_columns" value="" name="restpost_numb_columns" required /></td>
-			<td><input type="number" class="tiny-text" id="restpost_excpt_limit" value="" name="restpost_excpt_limit" /></td>
-			<td><input type="number" class="tiny-text" id="restpost_ttl_font_sz" value="" name="restpost_ttl_font_sz" /></td>
-			<td><input type="number" class="tiny-text" id="restpost_offset" value="" name="restpost_offset" /></td>
-			<td><input type="submit" value="Publish" tabindex="5" id="publish_restpost_shortcode" name="publish_restpost_shortcode" class="button button-primary" /></td>
+	<tr>
+		<th colspan="8">Shortcode Creator</th>
+		</tr>
+			<td>Title:<br/>
+				<input type="text" id="shortcode_title" value="" name="shortcode_title" required />
+			</td>
+			<td>
+				<span class="rp_tooltip"><span class="rp_tooltiptext">Enter the WordPress website url like:<br/>https://www.restposts.com</span>Website:</span><br/>
+				<input type="url" id="restpost_website_url" value="<?php echo site_url(); ?>" name="restpost_website_url" required />
+			</td>
+			<td>
+				<span class="rp_tooltip"><span class="rp_tooltiptext">How many posts would you like to display with this shortcode?</span>Posts:</span><br/>
+				<input type="number" class="tiny-text" id="restpost_numb_posts" value="3" name="restpost_numb_posts" required />
+			</td>
+			<td>
+				<span class="rp_tooltip">
+					<span class="rp_tooltiptext">How many columns would you like to display the posts in? (1, 2, 3 or 4 columns)
+					</span>Columns:</span><br/>
+				<input type="number" class="tiny-text" id="restpost_numb_columns" value="1" name="restpost_numb_columns" required />
+			</td>
+			<td>
+				<span class="rp_tooltip"><span class="rp_tooltiptext">Limit the number of words to be displayed from the excerpts.</span>Excerpt Limit:</span><br/>
+				<input type="number" class="tiny-text" id="restpost_excpt_limit" value="" name="restpost_excpt_limit" />
+			</td>
+			<td>
+				<span class="rp_tooltip"><span class="rp_tooltiptext">Enter a number here if you want to skip a few posts.</span>Offset:</span><br/>
+				<input type="number" class="tiny-text" id="restpost_offset" value="" name="restpost_offset" />
+			</td>
+			<td>Post Type:<br/>
+				<input type="text" id="restpost_post_type" value="posts" name="restpost_post_type" />
+			</td>
+			<td><br/>
+				<input type="submit" value="Publish" tabindex="5" id="publish_restpost_shortcode" name="publish_restpost_shortcode" class="button button-primary" />
+			</td>
 			<input type="hidden" name="insert_post" value="post" />
 		<?php wp_nonce_field( 'new_restpost_post' ); ?>
 		</table>
 	</form>
 	</div>
-<?php	}	} // END CUSTOM POST CREATION FUNCTION & FORM
+<?php	}	} // END CUSTOM POST CREATION FUNCTION & FORM aka Shortcode Generator
 }
 	$create_update_class = new RestPost_Create_Update_Feature;
 	echo $create_update_class->restpost_create_new_post();
 	echo $create_update_class->restposts_shortcode_query();
-
 }
 // HTML for Section 3 / Tab 3
 if( $restpost_active_tab == 'support' ) { ?>
+<div class="postbox-conatiner" id="restpost_supportab">
+<div class="postbox">
+<div class="inside">
 <h3>Support Future Plugin Development</h3>
 <p>Did you find this plugin useful? If so, show your support and donate today!</p>
-<p>Your donations support the future development and feature enhancements for this plugin. Donations of any amount will be greatly appreciated.</p>
+<p>Your donations support future development and feature enhancements for this plugin. Donations of any amount are accepted and very much appreciated.</p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="J7C66Y92MG7TC">
@@ -272,60 +382,48 @@ if( $restpost_active_tab == 'support' ) { ?>
 <li><strong>Shortcode Title</strong>: Allows you to label shortcodes for future reference. This is not shown on the front of the website.</li>
 <li><strong>Description</strong>: Allows you to add a description to your shortcode. Useful for knowing placement locations, etc.</li>
 </ol><br/>
-<h2>Shortcode Options - useful for creating shortcodes manually. <code>[restpost]</code></h2>
-<ol>
-<li><strong>url</strong> - This is the website address you want to display posts from.  <strong>Example</strong>: <code>[url="<?php echo site_url();?>"]</code></li>
-<li><strong>columns</strong> - The number of columns to display posts in (1, 2, 3 or 4).  <strong>Example</strong>: <code>[columns="3"]</code></li>
-<li><strong>date</strong> - Shows the post date by default. Specify false to hide.  <strong>Example</strong>: unspecified or <code>[date="true"]</code> or <code>[date="false"]</code></li>
-<li><strong>title (default="true")</strong> - Shows the post title by default. Specify false to hide.  <strong>Example</strong>: unspecified or <code>[title="true"]</code> or <code>[title="false"]</code></li>
-<li><strong>img (default="true")</strong> - Shows the post image by default. Specify false to hide.  <strong>Example</strong>: unspecified or <code>[img="true"]</code> or <code>[img="false"]</code></li>
-<li><strong>title_size (optional)</strong> - Specify an optional font size for the post title in pixels(px).  <strong>Example</strong>: <code>[title_size="18"]</code></li>
-<li><strong>excerpt (default="true")</strong> - Shows the post excerpt by default. Specify false to hide.  <strong>Example</strong>: unspecified or <code>[excerpt="true"]</code> or <code>[excerpt="false"]</code></li>
-<li><strong>excerpt_length (optional)</strong> - Specify an optional excerpt word length.  <strong>Example</strong>: <code>[excerpt_length="10"]</code></li>
-<li><strong>offset (optional)</strong> - Specify an optional post offset. This will skip the recent post by number you specify.  <strong>Example</strong>: <code>[offset="2"]</code></li>
-</ol><br/>
-<h3>Complete Shortcode Example With All Options Set</h3>
-<ul>
-	<li>In this example, we have several items listed as ="true". We don't necessarily need to include these since they will be displayed by default.</li>
-	<li><code>[restpost url="<?php echo site_url();?>" count="8" columns="4" date="true" title="true" img="true" title_size="18" excerpt="true" excerpt_length="1" offset="2"]</code></li>
-</ul>
-<ul>
-	<li>The example below will display posts exactly the same as the shortcode above even though we left out the ="true" statements.</li>
-	<li><code>[restpost url="http://www.restposts.com" count="8" columns="4" excerpt_length="1" title_size="18" offset="2"]</code></li>
-</ul>
-<br/>
 
+<h2>Please Visit My Website For Support</h2>
 <p><a href="http://www.restposts.com/contact">Contact Us</a> | <a href="http://www.restposts.com">Visit RESTposts.com</a></p>
+</div></div></div>
 <?php }
 
 }
 
-function restpost_link_checker_element()
-	{
-		?>
-			<input type="url" name="restpost_link_checker" class="regular-text" id="restpost_link_checker" value="<?php echo get_option('restpost_link_checker'); ?>" required />
-<?php $valid_url = wp_remote_get( get_option('restpost_link_checker') . '/wp-json/wp/v2/posts?per_page=1' );
-	$posts = json_decode( wp_remote_retrieve_body( $valid_url ) );
+function enable_widget_shortcodes_element()
+	{ ?>
+		<div class="rp_tooltip">
+		<input type="checkbox" name="enable_widget_shortcodes" class="checkbox" id="enable_widget_shortcodes" <?php checked( get_option('enable_widget_shortcodes')); ?> ) value="1" /><span class="rp_tooltiptext">Check this box if you want to use shortcodes in widget areas.</span>
+</div><span style="margin-left:25px;"><input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes"></span>
+	<?php }
 
-	if( empty( $posts ) ) {
-		echo '<span style="margin-right:10px;color:red;"><i class="fa fa-times-circle fa-lg" aria-hidden="true"></i></span>';
-	}
-	else {
-		echo '<span style="margin-right:10px;color:green;"><i class="fa fa-check-circle fa-lg" aria-hidden="true"></i></span>';
-	}
-	}
+	if (isset($_POST['update_restpost_shortcode'])){
+		$delete_posts_ids = get_posts('post_type=mrp_restposts&posts_per_page=-1&fields=ids');
+		foreach ($delete_posts_ids as $delete_id ) {
+			delete_transient( 'restpost_transient_id_'.$delete_id );
+		}
+	} else {};
 
 // Sections & Tabs
 function restpost_plugin_panel_fields()
 	{
 		// Link Checker Section
-		add_settings_section("section", "Use the form below to test the url for valid WP REST API response", null, "theme-options");
-	
+		// add_settings_section("section", "Use the form below to test the url for valid WP REST API response", null, "plugin-options");
+
+		// Enable Widget Shortcodes Section
+		add_settings_section("section-2", null, null, "plugin-options-2");
+
 		// Settings Fields
-		add_settings_field("restpost_link_checker", "REST API Check", "restpost_link_checker_element", "theme-options", "section");
-		
+		// add_settings_field("restpost_link_checker", "REST API Check", "restpost_link_checker_element", "plugin-options", "section");
+
+		// Enable Widget Fields
+		add_settings_field("enable_widget_shortcodes", "Enable Shortcode Usage in Text Widget Sidebars", "enable_widget_shortcodes_element", "plugin-options-2", "section-2");
+
 		// Register Settings
-		register_setting("section", "restpost_link_checker");
+		// register_setting("section", "restpost_link_checker");
+		register_setting("section-2", "enable_widget_shortcodes");
 	}
 
 add_action("admin_init", "restpost_plugin_panel_fields");
+
+(!empty(get_option('enable_widget_shortcodes')) ? add_filter('widget_text', 'do_shortcode') : '');

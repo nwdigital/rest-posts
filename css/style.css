@@ -23,13 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .mrp-post-widget {
 	margin-bottom: 20px;
 }
-
+/*
 div.mrp-post-title, div.mrp-widget-excerpt, div.mrp-widget-post-date  {
 	margin:15px 0;
 }
+*/
 
-h3.mrp-post-title {
-	padding-top:20px;
+.mrp-post-title h4 {
+	padding:0 0 15px 0;
 }
 
 .single-mrp-post {
@@ -39,9 +40,11 @@ h3.mrp-post-title {
 .mrp-excerpt {
 	padding-top:10px 0;
 }
-
+.mrp-widget-post-date {
+	font-size:.8em;
+}
 .mrp-post-date {
-	color:c2c2c2;
+	padding:0px 0px 15px 0px;
 }
 
 .mrp-row {

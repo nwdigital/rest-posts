@@ -27,6 +27,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 // delete settings options
 delete_option( 'restpost_link_checker' );
+delete_option( 'enable_widget_shortcodes' );
 
 // delete widget instances
 delete_option( 'widget_restposts_widget' );

@@ -30,7 +30,7 @@ function restposts_cpt_my_shortcodes_register() {
         'public'             => false,
         'publicly_queryable' => false,
         'show_ui'            => true,
-        'show_in_menu'       => true,
+        'show_in_menu'       => false,
         'query_var'          => true,
         'rewrite'            => array( 'slug' => 'restposts' ),
         'capability_type'    => 'post',

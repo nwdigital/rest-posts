@@ -16,6 +16,87 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **************************************************************************/
+.toggle_box_restposts {
+  display: none;
+  border-top:1px solid lightgrey;
+}
+
+.mrp_edit_table{
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  width:100%;
+  -webkit-align-items: top;
+   align-items: top;
+   -webkit-justify-content: center;
+   justify-content: center;
+}
+.mrp_edit_item {
+  padding-bottom:25px;
+
+}
+.mrp_edit_table > div {
+  margin: 25px;
+  width:25%;
+}
+/*  Shortcode Heading Divs START  */
+  .rp_shortcode_heading {
+    display:flex;
+    width:100%;
+    align-items: center;
+    justify-content: center;
+  }
+  .rp_shortcode_heading div {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rp_shortcode_heading > div {
+    width:25%;
+  }
+  .rp_shortcode_heading > div > span {
+    font-size:1.4em;
+    font-weight:600;\
+  }
+/*  Shortcode Heading Divs END  */
+
+/*  Shortcode Divs START  */
+  .mrp_copy_shortcode {
+    cursor: pointer;
+  }
+  .mrp_hidden {
+    display:none;
+  }
+
+  div.shortcode_section > div {
+    display: none;
+    position: relative;
+    text-align: center;
+    padding:5px 10px;
+    color:white;
+    background: rgba(0, 0, 0, 0.78);
+   }
+
+  .rp_shortcode_details {
+    display:flex;
+    width:100%;
+    align-items: center;
+    justify-content: center;
+  }
+  .rp_shortcode_details div {
+    padding:15px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rp_shortcode_details > div {
+    width:25%;
+  }
+  .rp_shortcode_details > div > span {
+    font-size:1.2em;
+  }
+/*  Shortcode Divs END  */
 
 table.restposts-shortcode-table {
     border-collapse: collapse;
@@ -34,20 +115,20 @@ table.restposts-shortcode-table {
 
 .restposts-shortcode-table th {
     text-align: left;
-    padding: 12px;
+    padding: 8px;
 }
 
 .restposts-shortcode-table tr {
 	border:1px solid #D3D3D3;
 }
 
-.restposts-shortcode-table th { 
+.restposts-shortcode-table th {
     background-color: #0099ff;
     color: white;
 }
 
 .restposts-shortcode-table tr.rp-rowstart {
-	border-bottom:10px solid #0099ff;
+	border-top:2px solid #0099ff;
 }
 
 .required {
@@ -55,4 +136,51 @@ table.restposts-shortcode-table {
     margin-left: -11px;
     color: #FB0000;
     font-size: 15px;
+}
+
+/* Tooltip container */
+.rp_tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.rp_tooltip .rp_tooltiptext {
+    visibility: hidden;
+    width: 220px;
+    background-color: #555;
+    color: #fff;
+    text-align: left;
+    padding: 5px 10px;
+    border-radius: 6px;
+
+    /* Position the rp_tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -110px;
+
+    /* Fade in rp_tooltip */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* Tooltip arrow */
+.rp_tooltip .rp_tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 110px;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the rp_tooltip text when you mouse over the rp_tooltip container */
+.rp_tooltip:hover .rp_tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }

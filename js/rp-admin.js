@@ -17,59 +17,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **************************************************************************/
 
-// JavaScript Document
-function copyToClipboard(elementId) {
-
-var aux = document.createElement("input"); // Create a "hidden" input
-
-  // Assign it the value of the specified element
-  aux.setAttribute("value", document.getElementById(elementId).innerHTML);
-
-  // Append it to the body
-  document.body.appendChild(aux);
-
-  // Highlight its content
-  aux.select();
-
-  // Copy the highlighted text
-  document.execCommand("copy");
-
-  // Remove it from the body
-  document.body.removeChild(aux);
-
-}
-
-function postshortcode_copyToClipboard(elementId) {
-
-  // Create a "hidden" input
-  var aux = document.createElement("input");
-
-  // Assign it the value of the specified element
-  aux.setAttribute("value", document.getElementById(elementId).innerHTML);
-
-  // Append it to the body
-  document.body.appendChild(aux);
-
-  // Highlight its content
-  aux.select();
-
-  // Copy the highlighted text
-  document.execCommand("copy");
-
-  // Remove it from the body
-  document.body.removeChild(aux);
-
-}
+// Shortcode List Toggle
+jQuery(document).ready(function($){
+  $('.restpost_edit').each(function(){
+    $(this).click(function(){
+      $(this).parent().parent().parent().siblings().slideToggle('fast');
+    });
+  });
+});
 
 // asterix next to required fields
 jQuery(document).ready(function() {
  jQuery("[required]").after("<span class='required'>*</span>");
 });
 
+// Copy Function
+function restposts_clip(text) {
+    var restposts_copyElement = document.createElement('input');
+    restposts_copyElement.setAttribute('type', 'text');
+    restposts_copyElement.setAttribute('value', text);
+    restposts_copyElement = document.body.appendChild(restposts_copyElement);
+    restposts_copyElement.select();
+    document.execCommand('copy');
+    restposts_copyElement.remove();
+}
+
+// Copy Shortcode on Click Event
+jQuery(document).ready(function($) {
+  $('.mrp_copy_shortcode').each(function(){
+    $(this).click(function(){
+      shortcode_id = $(this).html();
+        restposts_clip(shortcode_id);
+    $(this).addClass('mrp_hidden');
+    $(this).parent().children('div').fadeIn( 1000, function() {
+      // $(this).parent().children('div').children( "span" ).fadeIn( 1000 );
+      });
+    $(this).parent().children('div').fadeOut( 1000, function() {
+      // $(this).parent().children('div').children( "span" ).fadeOut( 1000 );
+      $(this).siblings('span').removeClass('mrp_hidden');
+      });
+    });
+  });
+});
+
 // delete shortcode check
-jQuery(document).ready(function(){
-    jQuery(".rp-delete").click(function() {
-        if (!confirm("Are you sure? This process cannot be undone.")){
+jQuery(document).ready(function($){
+    $(".rp-delete").click(function() {
+        if (!confirm("Are you sure you want to delete this shortcode? This process cannot be undone.")){
             return false;
         }
     });

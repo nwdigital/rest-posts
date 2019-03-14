@@ -4,7 +4,7 @@
  * Plugin Name: RESTposts
  * Plugin URI: http://www.restposts.com
  * Description: Embed posts from your site or others' into your posts and pages with WP REST API using shortcodes or the RESTposts widget.
- * Version: 1.0
+ * Version: 1.1.0
  * Author: Mathew Moore
  * Author URI: http://www.restposts.com
  * License: GPLv2 or later
@@ -32,8 +32,9 @@ require_once dirname( __FILE__ ) . '/inc/mrp-settings.php';
 require_once dirname( __FILE__ ) . '/inc/mrp-posts-widget.php';
 require_once dirname( __FILE__ ) . '/inc/mrp-featured-image.php';
 require_once dirname( __FILE__ ) . '/inc/mrp-posts-shortcode.php';
+require_once dirname( __FILE__ ) . '/admin/mrp-posts-shortcode_v2.php';
 
-require_once dirname( __FILE__ ) . '/inc/mrp-generate-new.php';
+require_once dirname( __FILE__ ) . '/inc/mrp-register-cpt.php';
 
 register_activation_hook( __FILE__, 'rest_posts_activation' );
 register_deactivation_hook( __FILE__, 'rest_posts_deactivation' );
@@ -49,8 +50,8 @@ add_action('wp_enqueue_scripts','restposts_register_styles');
 // Register Admin Styles & Scripts
 function restposts_register_scripts(){
 wp_enqueue_script( 'shortcode_script_1', plugins_url( 'js/rp-admin.js' , __FILE__ ) );
-wp_enqueue_script( 'shortcode_style_2', plugins_url( 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' , __FILE__ ) );
-wp_enqueue_style( 'shortcode_style_3', plugins_url( 'css/settings-backend-style.css' , __FILE__ ) );
+wp_enqueue_style( 'shortcode_style_2', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' );
+wp_enqueue_style( 'shortcode_style_3', plugin_dir_url(__FILE__ ) . 'css/settings-backend-style.css', array(), '1.3.8');
 }
 
 add_action('admin_enqueue_scripts','restposts_register_scripts');
