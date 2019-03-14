@@ -1,0 +1,96 @@
+/***************************************************************************
+
+Copyright (C) 2017 Mathew Moore
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+**************************************************************************/
+
+/* General CSS Styles */
+
+/* Widget CSS */
+.mrp-post-widget {
+	margin-bottom: 20px;
+}
+
+div.mrp-post-title, div.mrp-widget-excerpt, div.mrp-widget-post-date  {
+	margin:15px 0;
+}
+
+h3.mrp-post-title {
+	padding-top:20px;
+}
+
+.single-mrp-post {
+	padding-bottom:15px;
+}
+
+.mrp-excerpt {
+	padding-top:10px 0;
+}
+
+.mrp-post-date {
+	color:c2c2c2;
+}
+
+.mrp-row {
+  display: flex;                  /* establish flex container */
+  flex-direction: row;            /* default value; can be omitted */
+  flex-wrap: wrap;              /* default value; can be omitted */
+  justify-content: space-between; /* switched from default (flex-start, see below) */
+  width:100%;
+}
+
+/* 1 Column */
+.mrp-1-column {
+	width:100%;
+}
+/* Comlumns Display START */
+.mrp-row.mrp-1-column, .mrp-row.mrp-2-column, .mrp-row.mrp-3-column, .mrp-row.mrp-4-column {
+	margin: -.5%;
+	overflow: auto;
+}
+/* 2 Column */
+.mrp-2-column {
+	width:48%;
+}
+
+.mrp-3-column {
+  width: 31%;
+}
+
+/* 4 Column */
+.mrp-4-column {
+	width:23%;
+}
+
+/* Responsive Sizes */
+@media (max-width : 900px) {
+	.mrp-4-column {
+		width:48%;
+	}
+}
+
+/* Responsive Sizes */
+@media (max-width : 768px) {
+	.mrp-3-column {
+		width:100%;
+	}
+}
+
+@media (max-width : 600px) {
+	.mrp-2-column, .mrp-4-column {
+		width:100%;
+	}
+}

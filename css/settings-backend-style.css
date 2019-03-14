@@ -1,0 +1,58 @@
+/***************************************************************************
+
+Copyright (C) 2017 Mathew Moore
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+**************************************************************************/
+
+table.restposts-shortcode-table {
+    border-collapse: collapse;
+	background-color: #FFFFFF;
+    width: 98%;
+}
+
+.restposts-shortcode-table table, td, th {
+	vertical-align: middle;
+}
+
+.restposts-shortcode-table td {
+    text-align: left;
+    padding: 4px 12px;
+}
+
+.restposts-shortcode-table th {
+    text-align: left;
+    padding: 12px;
+}
+
+.restposts-shortcode-table tr {
+	border:1px solid #D3D3D3;
+}
+
+.restposts-shortcode-table th { 
+    background-color: #0099ff;
+    color: white;
+}
+
+.restposts-shortcode-table tr.rp-rowstart {
+	border-bottom:10px solid #0099ff;
+}
+
+.required {
+    position: absolute;
+    margin-left: -11px;
+    color: #FB0000;
+    font-size: 15px;
+}
